@@ -1,5 +1,4 @@
 import { SectionCards } from "@/components/cardsActions"
-import { Button } from "@/components/ui/button"
 
 export default function Home() {
   return (
@@ -12,9 +11,6 @@ export default function Home() {
             </h1>
           </header>
           <SectionCards />
-          <div className="flex justify-end mt-4">
-            <Button>Gravar</Button>
-          </div>
         </div>
       </div>
     </div>

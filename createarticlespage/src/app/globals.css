@@ -111,6 +111,25 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
+[data-sonner-toaster] {
+  --width: 356px;
+  --font-family: inherit;
+  --normal-bg: var(--popover);
+  --normal-text: var(--popover-foreground);
+  --normal-border: var(--border);
+  --success-bg: var(--popover);
+  --success-text: var(--popover-foreground);
+  --success-border: var(--border);
+  --error-bg: var(--popover);
+  --error-text: var(--popover-foreground);
+  --error-border: var(--border);
+}
+
+[data-sonner-toast] {
+  --y: 0;
+  --lift: 1;
+  --lift-amount: calc(var(--lift) * var(--gap));
+}
 
 @layer base {
   * {

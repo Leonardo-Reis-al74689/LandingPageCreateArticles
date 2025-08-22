@@ -241,15 +241,15 @@ export const setupMocks = () => {
     try {
       const data = JSON.parse(config.data);
     
-      const typeCode = data.articleTypeCode || "PK";
-      const pairsCode = (data.numberOfPairs || "2").padStart(3, '0');
-      const clientCode = data.clientCode || "015";
-      const brandCode = data.brandCode || "099";
-      const colorCode = data.colorCode || "001";
-      const sizeCode = data.sizeCode || "042";
-      const certificationCode = data.certificationCode || "01";
-    
-      const generatedCode = `${typeCode}${pairsCode}${clientCode}${brandCode}${colorCode}${sizeCode}${certificationCode}`;
+  const typeCode = data.articleTypeCode || "PK";
+  const pairsCode = (data.numberOfPairs || "2").padStart(3, '0');
+  const clientCode = data.clientCode || "015";
+  const brandCode = data.brandCode || "099";
+  const colorCode = data.colorCode || "001";
+  const sizeCode = data.sizeCode || "042";
+  let certificationCode = data.certificationCode || "01";
+  certificationCode = parseInt(certificationCode).toString().padStart(2, '0');
+  const generatedCode = `${typeCode}${pairsCode}${clientCode}${brandCode}${colorCode}${sizeCode}${certificationCode}`;
     
         return [200, {
           success: true,
@@ -330,9 +330,9 @@ export const formatDataForDropdown = (apiData: any[]) => {
       }
       
       return { 
-        code: String(code).slice(0, 10),
+        code: String(code),
         name: String(name).slice(0, 100),
-        value: String(code).slice(0, 10),
+        value: String(code),
         label: String(name).slice(0, 100)
       };
     })

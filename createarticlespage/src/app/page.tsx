@@ -2,6 +2,7 @@
 
 import { SectionCards } from "@/components/cardsActions"
 import { useNavigation } from "@/contexts/NavigationContext"
+import { Construction } from "lucide-react"
 
 function CreateArticlesContent() {
   return (
@@ -19,9 +20,9 @@ function CreateArticlesContent() {
 function DefaultContent({ title }: { title: string }) {
   return (
     <div className="@container/main px-3 md:px-6 pb-6">
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center space-y-4">
-          <div className="text-6xl text-gray-300">🚧</div>
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <div className="text-center space-y-4 flex flex-col items-center">
+          <div className="text-8xl text-gray-300 flex justify-center items-center"><Construction size={64} /></div>
           <h2 className="text-2xl font-semibold text-gray-600 dark:text-gray-300">
             {title}
           </h2>

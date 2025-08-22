@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useCallback, useMemo } from "react"
 
-import { LuChevronDown, LuPackage } from "react-icons/lu"
+import { LuChevronDown } from "react-icons/lu"
 
 import {
   Card,
@@ -28,6 +28,7 @@ import { apiService } from "@/hooks/mockData"
 import { useFormData, type ArticleFormData } from "@/hooks/useFormData"
 import { useDropdownData, type DropdownOption } from "@/hooks/useDropdownData"
 import { FormField } from "@/components/FormField"
+import { Separator } from "./ui/separator"
 
 export function SectionCards() {
   const { formData, updateField, updateMultipleFields, resetForm, validateRequired } = useFormData();
@@ -65,6 +66,13 @@ export function SectionCards() {
   }, [loadInitialData]);
 
   React.useEffect(() => {
+    if (!formData.packType && packTypeOptions.length > 0) {
+      const defaultPackOption = packTypeOptions[0];
+      handleDropdownSelect('packType', defaultPackOption);
+    }
+  }, [formData.packType]);
+
+  React.useEffect(() => {
     loadBrands(formData.clientCode);
   }, [formData.clientCode, loadBrands]);
 
@@ -93,7 +101,6 @@ export function SectionCards() {
     const handleOpenChange = (open: boolean) => {
       setOpenDropdowns(prev => ({ ...prev, [dropdownKey]: open }));
       if (!open) {
-        // Limpar filtro quando fechar
         setDropdownInputs(prev => ({ ...prev, [dropdownKey]: "" }));
       }
     };
@@ -101,7 +108,6 @@ export function SectionCards() {
     const handleOptionSelect = (option: DropdownOption) => {
       handleDropdownSelect(fieldName, option);
       setDropdownInputs(prev => ({ ...prev, [dropdownKey]: "" }));
-      // Fechar dropdown automaticamente
       setOpenDropdowns(prev => ({ ...prev, [dropdownKey]: false }));
     };
 
@@ -213,6 +219,11 @@ export function SectionCards() {
           value = "999";
         } else if (value && !/^\d+$/.test(value)) {
           return; 
+        }
+      }
+      else if (field === 'coefficientPerBox') {
+        if (value && !/^\d*\.?\d{0,8}$/.test(value)) {
+          return;
         }
       }
       else if (value && !/^\d*\.?\d*$/.test(value)) {
@@ -384,11 +395,6 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
 
   return (
     <div className="space-y-6">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-        <LuPackage className="w-4 h-4" />
-        <span>Packs de Meias / Packs Assortment Socks</span>
-      </div>
 
       {/* Formulário Principal */}
       <Card className="w-full">
@@ -399,15 +405,15 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
             </CardHeader>
         <CardContent className="space-y-6">
           {/* Primeira linha */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+          <div className="grid grid-cols-1 md:grid-cols-8 gap-4">
+            <div className="space-y-2 md:col-span-1">
+              <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
                 Tipo / Kind
               </label>
-              {createDropdown("articleType", articleTypeOptions, "PK", "w-full", loading.initial)}
+              {createDropdown("articleType", articleTypeOptions, "Selecionar tipo...", "w-full", loading.initial)}
             </div>
-            <div className="space-y-2 md:col-span-3">
-              <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+            <div className="space-y-2 md:col-span-7">
+              <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
                 Packs de Meias / Packs Assortment Socks
               </label>
               {createDropdown("packType", packTypeOptions, "Selecionar tipo de pack...", "w-full")}
@@ -418,8 +424,8 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
           {isPKSelected && (
             <>
               {/* Segunda linha */}
-              <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                <div className="space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-8 gap-4">
+                <div className="space-y-2 md:col-span-1">
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Nº Pares / Nr. Pairs
                   </label>
@@ -427,26 +433,32 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                     value={formData.numberOfPairs}
                     onChange={e => handleInputChange("numberOfPairs", e.target.value)}
                     className="w-full"
-                    placeholder="Máx. 999"
+                    placeholder="0"
                     type="number"
                     min="0"
                     max="999"
                   />
                 </div>
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <div className="space-y-1 md:col-span-3">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-end">
                     Cliente / Customer
                   </label>
                   {createDropdown("client", clientOptions, "Selecionar cliente...", "w-full", loading.initial)}
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 md:col-span-2">
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Packs p/Cx. / Packs per Box
                   </label>
                   <Input
-                    value={formData.packsPerBox}
+                    value={formData.packsPerBox || "0"}
                     onChange={e => handleInputChange("packsPerBox", e.target.value)}
+                    onFocus={e => {
+                      if (e.target.value === "0" && !formData.packsPerBox) {
+                        e.target.select();
+                      }
+                    }}
                     className="w-full"
+                    placeholder="0"
                     type="number"
                     min="0"
                   />
@@ -456,9 +468,15 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                     Coeficiente p/Cx. / Coefficient per Box
                   </label>
                   <Input
-                    value={formData.coefficientPerBox}
+                    value={formData.coefficientPerBox || "0"}
                     onChange={e => handleInputChange("coefficientPerBox", e.target.value)}
+                    onFocus={e => {
+                      if (e.target.value === "0" && !formData.coefficientPerBox) {
+                        e.target.select();
+                      }
+                    }}
                     className="w-full"
+                    placeholder="0,00000000"
                     type="number"
                     step="0.00000001"
                     min="0"
@@ -467,42 +485,38 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
               </div>
 
               {/* Terceira linha */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+              <div className="grid grid-cols-1 md:grid-cols-8 gap-4">
+                <div className="space-y-2 md:col-span-3">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
                     Cor - Sortimento / Color - Assortment
                   </label>
-                  {createDropdown("colorAssortment", colorOptions, "Selecionar cor...", "w-full", loading.colors)}
+                  {createDropdown("colorAssortment", colorOptions, colorOptions.length > 0 ? "Selecionar cor..." : "Primeiro selecione uma marca", "w-full", loading.colors)}
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <div className="space-y-2 md:col-span-3">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
                     Marca / Brand
                   </label>
-                  {createDropdown("brand", brandOptions, "Selecionar marca...", "w-full", loading.brands)}
+                  {createDropdown("brand", brandOptions, brandOptions.length > 0 ? "Selecionar marca..." : "Primeiro selecione um cliente", "w-full", loading.brands)}
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
                     Tamanho / Size
                   </label>
                   {createDropdown("size", sizeOptions, sizeOptions.length > 0 ? "Selecionar tamanho..." : "Primeiro selecione uma cor", "w-full", loading.sizes)}
                 </div>
               </div>
 
-              {/* Quarta linha */}
+              {/* Quarta linha - Só Certificação */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
                     Certificação / Certification
                   </label>
                   {createDropdown("certification", certificationOptions, "Selecionar certificação...", "w-full", loading.initial)}
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Sustainable Comp.
-                  </label>
-                  {createDropdown("sustainableComp", sustainableOptions, "Selecionar...", "w-full", loading.initial)}
-                </div>
               </div>
+
+              <Separator />
 
               {/* Quinta linha - Descrição */}
               <FormField
@@ -531,8 +545,8 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
               </div>
 
               {/* Sétima linha */}
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div className="md:col-span-2">
+              <div className="grid grid-cols-1 md:grid-cols-8 gap-4">
+                <div className="md:col-span-3">
                   <FormField
                     label="Customer Barcode EAN13"
                     value={formData.customerBarcode}
@@ -540,14 +554,19 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                     maxLength={50}
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 md:col-span-2">
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Peso/Weight - PK
                   </label>
                   <div className="flex gap-2">
                     <Input
-                      value={formData.weight}
+                      value={formData.weight || "0"}
                       onChange={e => handleInputChange("weight", e.target.value)}
+                      onFocus={e => {
+                        if (e.target.value === "0" && !formData.weight) {
+                          e.target.select();
+                        }
+                      }}
                       className="flex-1"
                       type="number"
                       min="0"
@@ -558,35 +577,64 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                     </span>
                   </div>
                 </div>
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                    Preço Un/Un Price
+                  <div className="space-y-1 md:col-span-3">
+                   <div className="flex flex-wrap gap-2 items-end">
+                     <div className="space-y-1">
+                     <label className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-end">Un/Unit</label>
+                       <div className="w-16">
+                         {createDropdown("unit", unitOptions, "Un", "w-full", loading.initial)}
+                       </div>
+                     </div>
+                     <div className="flex-1 min-w-[100px]">
+                        <Input
+                         value={formData.unitPrice || "0"}
+                         onChange={e => handleInputChange("unitPrice", e.target.value)}
+                         onFocus={e => {
+                           if (e.target.value === "0" && !formData.unitPrice) {
+                             e.target.select();
+                           }
+                         }}
+                         className="w-full"
+                         type="number"
+                         min="0"
+                         step="0.01"
+                       />
+                     </div>
+                     <div className="space-y-1">
+                     <label className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-end">Moeda/Currency</label>
+                       <div className="w-20">
+                         {createDropdown("currency", currencyOptions, "EUR", "w-full", loading.initial)}
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+              </div>
+
+              {/* Sustainable Comp. depois do separador */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
+                    Sustainable Comp.
                   </label>
-                  <div className="flex gap-2">
-                    {createDropdown("unit", unitOptions, "Un", "w-20", loading.initial)}
-                    <Input
-                      value={formData.unitPrice}
-                      onChange={e => handleInputChange("unitPrice", e.target.value)}
-                      className="flex-1"
-                      type="number"
-                      min="0"
-                      step="0.01"
-                    />
-                    {createDropdown("currency", currencyOptions, "Moeda", "w-24", loading.initial)}
-                  </div>
+                  {createDropdown("sustainableComp", sustainableOptions, "Selecionar...", "w-full", loading.initial)}
                 </div>
               </div>
 
               {/* Oitava linha - Medidas */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-8 gap-4">
+                <div className="space-y-2 md:col-span-2">
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Peso Cx/Box Weight
                   </label>
                   <div className="flex gap-2">
                     <Input
-                      value={formData.boxWeight}
+                      value={formData.boxWeight || "0"}
                       onChange={e => handleInputChange("boxWeight", e.target.value)}
+                      onFocus={e => {
+                        if (e.target.value === "0" && !formData.boxWeight) {
+                          e.target.select();
+                        }
+                      }}
                       className="flex-1"
                       type="number"
                       min="0"
@@ -597,15 +645,20 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                     </span>
                   </div>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 md:col-span-6">
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
                     Medidas Cx/Box Measures
                   </label>
                   <div className="flex gap-1 items-center">
                     <Input
-                      value={formData.boxWidth}
+                      value={formData.boxWidth || "0"}
                       onChange={e => handleInputChange("boxWidth", e.target.value)}
-                      className="w-16"
+                      onFocus={e => {
+                        if (e.target.value === "0" && !formData.boxWidth) {
+                          e.target.select();
+                        }
+                      }}
+                      className="w-20"
                       placeholder="L"
                       type="number"
                       min="0"
@@ -613,9 +666,14 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                     />
                     <span className="text-xs">x</span>
                     <Input
-                      value={formData.boxHeight}
+                      value={formData.boxHeight || "0"}
                       onChange={e => handleInputChange("boxHeight", e.target.value)}
-                      className="w-16"
+                      onFocus={e => {
+                        if (e.target.value === "0" && !formData.boxHeight) {
+                          e.target.select();
+                        }
+                      }}
+                      className="w-20"
                       placeholder="A"
                       type="number"
                       min="0"
@@ -623,9 +681,14 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                     />
                     <span className="text-xs">x</span>
                     <Input
-                      value={formData.boxDepth}
+                      value={formData.boxDepth || "0"}
                       onChange={e => handleInputChange("boxDepth", e.target.value)}
-                      className="w-16"
+                      onFocus={e => {
+                        if (e.target.value === "0" && !formData.boxDepth) {
+                          e.target.select();
+                        }
+                      }}
+                      className="w-20"
                       placeholder="P"
                       type="number"
                       min="0"

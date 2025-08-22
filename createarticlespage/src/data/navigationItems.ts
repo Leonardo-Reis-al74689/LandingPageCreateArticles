@@ -1,5 +1,4 @@
-import { Inbox, Search, Settings, Users, BarChart3, Rocket } from "lucide-react";
-import { LuLayoutDashboard } from "react-icons/lu";
+import { LayoutList, LayoutDashboard, ChartColumn, Settings, Users, Compass, Truck } from "lucide-react";
 import { LucideIcon } from "lucide-react";
 
 export interface NavigationItem {
@@ -13,31 +12,31 @@ export const navigationItems: NavigationItem[] = [
   {
     id: "create-articles",
     title: "Create Articles",
-    icon: LuLayoutDashboard as LucideIcon,
+    icon: LayoutDashboard,
     category: 'main'
   },
   {
     id: "backlog",
     title: "Backlog",
-    icon: Inbox,
+    icon: LayoutList,
     category: 'main'
   },
   {
     id: "roadmap",
     title: "Roadmap",
-    icon: BarChart3,
+    icon: Compass ,
     category: 'main'
   },
   {
     id: "reports",
     title: "Reports",
-    icon: Search,
+    icon: ChartColumn,
     category: 'main'
   },
   {
     id: "releases",
     title: "Releases",
-    icon: Rocket,
+    icon: Truck,
     category: 'main'
   },
   {

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/articles-sidebar"
 import { MockProvider } from "@/components/MockProvider"
 import { ThemeProvider } from "@/components/theme-provider"
+import { NavigationProvider } from "@/contexts/NavigationContext"
+import { DynamicHeader } from "@/components/DynamicHeader"
 import { Toaster } from "@/components/ui/sonner"
 import "./globals.css";
 
@@ -27,19 +29,18 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           enableSystem={false}
           disableTransitionOnChange
         >
-          <MockProvider>
-            <SidebarProvider>
-              <AppSidebar />
-              <main className="flex-1 flex flex-col overflow-auto">
-                <div className="flex items-center gap-2 p-4 border-b">
-                  <SidebarTrigger />
-                  <h2 className="font-semibold text-lg">Create Articles</h2>
-                </div>
-                {children}
-              </main>
-            </SidebarProvider>
-            <Toaster />
-          </MockProvider>
+          <NavigationProvider>
+            <MockProvider>
+              <SidebarProvider>
+                <AppSidebar />
+                <main className="flex-1 flex flex-col overflow-auto">
+                  <DynamicHeader />
+                  {children}
+                </main>
+              </SidebarProvider>
+              <Toaster />
+            </MockProvider>
+          </NavigationProvider>
         </ThemeProvider>
       </body>
     </html>

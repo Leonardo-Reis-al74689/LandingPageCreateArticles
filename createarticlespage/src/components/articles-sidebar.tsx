@@ -1,8 +1,4 @@
-import { Inbox, Search, Settings } from "lucide-react"
-import { 
-    LuLayoutDashboard,
-    LuCompass 
-} from "react-icons/lu";
+"use client"
 
 import {
   Sidebar,
@@ -11,88 +7,57 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
 import { Separator } from "@/components/ui/separator"
-
-// Menu items.
-const items = [
-  {
-    title: "Create Articles",
-    url: "#",
-    icon: LuLayoutDashboard,
-  },
-  {
-    title: "Backlog",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Roadmap",
-    url: "#",
-    icon: LuCompass,
-  },
-  {
-    title: "Reports",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Releases",
-    url: "#",
-    icon: Settings,
-  },
-  {
-    title: "Teams",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Project Settings",
-    url: "#",
-    icon: Settings,
-  },
-]
-
-const drawSeparator = 5;
-const finishElementsTable = 7;
+import { useNavigation } from "@/contexts/NavigationContext"
+import { SidebarMenuItem } from "@/components/SidebarMenuItem"
+import { navigationItems, getItemsByCategory } from "@/data/navigationItems"
 
 export function AppSidebar() {
+  const { activeItem, setActiveItem } = useNavigation();
+  
+  const mainItems = getItemsByCategory('main');
+  const secondaryItems = getItemsByCategory('secondary');
+
+  const handleItemClick = (itemId: string) => {
+    setActiveItem(itemId);
+  };
+
   return (
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel style={{ justifyContent: 'flex-start', position: 'relative', zIndex: 2, background: 'transparent', minHeight: 100, paddingLeft: 8 }}>
+          <SidebarGroupLabel className="flex justify-start items-center min-h-[100px] pl-2">
             <img 
               src="/WIP_ Logo 1-1.jpg" 
               alt="WIP Logo" 
-              style={{ height: 100, width: 100, objectFit: 'contain', display: 'block', marginLeft: 0, zIndex: 2, background: 'transparent', position: 'relative' }} 
+              className="h-[100px] w-[100px] object-contain"
             />
           </SidebarGroupLabel>
+          
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.slice(0, drawSeparator).map((item, idx) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+              {mainItems.map((item) => (
+                <SidebarMenuItem
+                  key={item.id}
+                  title={item.title}
+                  icon={item.icon}
+                  isActive={activeItem === item.id}
+                  onClick={() => handleItemClick(item.id)}
+                />
               ))}
+              
               <Separator className="my-2" />
-              {items.slice(drawSeparator, finishElementsTable).map((item, idx) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+              
+              {secondaryItems.map((item) => (
+                <SidebarMenuItem
+                  key={item.id}
+                  title={item.title}
+                  icon={item.icon}
+                  isActive={activeItem === item.id}
+                  onClick={() => handleItemClick(item.id)}
+                />
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

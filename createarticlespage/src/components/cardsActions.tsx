@@ -53,6 +53,7 @@ export function SectionCards() {
   } = useDropdownData();
   
   const [dropdownInputs, setDropdownInputs] = React.useState<Record<string, string>>({});
+  const [openDropdowns, setOpenDropdowns] = React.useState<Record<string, boolean>>({});
 
   const packTypeOptions = [
     { label: "Packs de Meias / Packs Assortment Socks", value: "packs_meias", code: "001", name: "Packs de Meias" },
@@ -83,12 +84,29 @@ export function SectionCards() {
     isLoading: boolean = false
   ) => {
     const dropdownKey = fieldName;
-  const filteredOptions = options.filter(opt =>
+    const isOpen = openDropdowns[dropdownKey] || false;
+    
+    const filteredOptions = options.filter(opt =>
       opt.label.toLowerCase().includes((dropdownInputs[dropdownKey] || "").toLowerCase())
-  );
+    );
+
+    const handleOpenChange = (open: boolean) => {
+      setOpenDropdowns(prev => ({ ...prev, [dropdownKey]: open }));
+      if (!open) {
+        // Limpar filtro quando fechar
+        setDropdownInputs(prev => ({ ...prev, [dropdownKey]: "" }));
+      }
+    };
+
+    const handleOptionSelect = (option: DropdownOption) => {
+      handleDropdownSelect(fieldName, option);
+      setDropdownInputs(prev => ({ ...prev, [dropdownKey]: "" }));
+      // Fechar dropdown automaticamente
+      setOpenDropdowns(prev => ({ ...prev, [dropdownKey]: false }));
+    };
 
   return (
-          <DropdownMenu>
+          <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
               <DropdownMenuTrigger asChild>
           <button 
             type="button" 
@@ -125,10 +143,7 @@ export function SectionCards() {
               <div
                 key={opt.code}
                 className="px-2 py-1.5 text-sm cursor-pointer hover:bg-muted rounded"
-                onClick={() => {
-                  handleDropdownSelect(fieldName, opt);
-                  setDropdownInputs(prev => ({ ...prev, [dropdownKey]: "" }));
-                }}
+                onClick={() => handleOptionSelect(opt)}
                   >
                     {opt.label}
               </div>
@@ -363,6 +378,7 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
   const handleResetForm = useCallback(() => {
     resetForm();
     setDropdownInputs({});
+    setOpenDropdowns({});
     resetPKData();
   }, [resetForm, resetPKData]);
 

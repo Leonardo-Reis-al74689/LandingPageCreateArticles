@@ -21,7 +21,7 @@ export function MockProvider({ children }: MockProviderProps) {
       try {
         setupMocks();
         setMockSetup(true);
-      } catch (error) {
+      } catch {
         setMockSetup(true);
       }
     }

@@ -175,7 +175,7 @@ export function SectionCards() {
     
     const codeFieldName = codeFieldMap[fieldName] || (fieldName + 'Code') as keyof ArticleFormData;
     
-    let updates: Partial<ArticleFormData> = {};
+    const updates: Partial<ArticleFormData> = {};
     updates[fieldName] = option.label;
     updates[codeFieldName] = option.code;
 
@@ -267,7 +267,7 @@ export function SectionCards() {
     }
 
     try {
-      const result = await apiService.verifyCode(formData);
+      const result = await apiService.verifyCode(formData as unknown as Record<string, unknown>);
       
       if (result.success) {
         updateField('newCodeGenerated', result.code);
@@ -298,7 +298,7 @@ Certificação ${components.certification || '00'}
           }
         });
       }
-    } catch (error) {
+    } catch {
       toast.error("Erro ao verificar código", {
         description: "Por favor, tente novamente.",
         duration: 5000,
@@ -353,11 +353,24 @@ Certificação ${components.certification || '00'}
       };
 
       const result = await apiService.saveArticle(articleData);
-      
-      if (result.success) {
-        const detailedInfo = `
-ID: ${result.id}
 
+      if (result.success) {
+
+        const saveArticleToJson = {
+          tipo: formData.articleType,
+          cliente: formData.client,
+          marca: formData.brand || 'Não especificado',
+          cor: formData.colorAssortment || 'Não especificado',
+          tamanho: formData.size || 'Não especificado',
+          numeroPares: formData.numberOfPairs,
+          certificacao: formData.certification || 'Não especificado',
+          codigo: formData.newCodeGenerated || 'Não gerado',
+        };
+        const savedArticles = JSON.parse(localStorage.getItem("artigos") || "[]");
+        savedArticles.push(saveArticleToJson);
+        localStorage.setItem("artigos", JSON.stringify(savedArticles));
+
+        const detailedInfo = `
 Tipo: ${formData.articleType}
 Cliente: ${formData.client}
 Marca: ${formData.brand || 'Não especificado'}
@@ -376,7 +389,6 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
             onClick: () => handleResetForm()
           }
         });
-
       }
     } catch (error) {
       toast.error("Erro ao gravar artigo", {

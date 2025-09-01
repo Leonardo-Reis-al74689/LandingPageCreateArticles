@@ -53,7 +53,7 @@ export const useDropdownData = () => {
         }));
         setArticleTypeOptions(formattedTypes);
       }
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar dados iniciais", {
         description: "Por favor, recarregue a página e tente novamente."
       });
@@ -72,7 +72,7 @@ export const useDropdownData = () => {
         setCurrencyOptions(formatDataForDropdown(pkData.currency) as DropdownOption[]);
         setSustainableOptions(formatDataForDropdown(pkData.sustComp) as DropdownOption[]);
       }
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar dados PK", {
         description: "Por favor, tente selecionar novamente."
       });
@@ -93,7 +93,7 @@ export const useDropdownData = () => {
       if (brandsData.success) {
         setBrandOptions(formatDataForDropdown(brandsData.data) as DropdownOption[]);
       }
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar marcas", {
         description: "Verifique a conexão e tente novamente."
       });
@@ -116,7 +116,7 @@ export const useDropdownData = () => {
       if (colorsData.success) {
         setColorOptions(formatDataForDropdown(colorsData.data) as DropdownOption[]);
       }
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar cores", {
         description: "Verifique a conexão e tente novamente."
       });
@@ -140,7 +140,7 @@ export const useDropdownData = () => {
         const formattedSizes = formatDataForDropdown(sizesData.data) as DropdownOption[];
         setSizeOptions(formattedSizes);
       }
-    } catch (error) {
+    } catch {
       toast.error("Erro ao carregar tamanhos", {
         description: "Verifique a conexão e tente novamente."
       });

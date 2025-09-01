@@ -227,7 +227,7 @@ export const setupMocks = () => {
         id: articleId,
         article: savedArticle
       }];
-    } catch (error) {
+    } catch {
       return [500, {
         success: false,
         message: 'Erro interno do servidor ao processar dados',
@@ -267,7 +267,7 @@ export const setupMocks = () => {
           isValid: true,
           exists: false 
         }];
-      } catch (error) {
+      } catch {
         return [500, {
           success: false,
           message: 'Erro interno do servidor ao gerar código',
@@ -305,18 +305,20 @@ export const apiService = {
     return response.data;
   },
 
-  saveArticle: async (articleData: any) => {
+  saveArticle: async (articleData: Record<string, unknown>) => {
     const response = await axios.post('/api/articles', articleData);
     return response.data;
   },
 
-  verifyCode: async (articleData: any) => {
+  verifyCode: async (articleData: Record<string, unknown>) => {
     const response = await axios.post('/api/articles/verify-code', articleData);
     return response.data;
   }
 };
 
-export const formatDataForDropdown = (apiData: any[]) => {
+type DropdownItem = { [key: string]: string };
+
+export const formatDataForDropdown = (apiData: DropdownItem[]) => {
   if (!apiData || !Array.isArray(apiData)) return [];
   
   return apiData

@@ -12,7 +12,9 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { useNavigation } from "@/contexts/NavigationContext"
 import { SidebarMenuItem } from "@/components/SidebarMenuItem"
-import { navigationItems, getItemsByCategory } from "@/data/navigationItems"
+import { getItemsByCategory } from "@/data/navigationItems"
+
+import Image from "next/image"
 
 export function AppSidebar() {
   const { activeItem, setActiveItem } = useNavigation();
@@ -29,10 +31,12 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="flex justify-start items-center min-h-[100px] pl-2">
-            <img 
-              src="/WIP_ Logo 1-1.jpg" 
-              alt="WIP Logo" 
+            <Image
+              src="/WIP_ Logo 1-1.jpg"
+              alt="WIP Logo"
               className="h-[100px] w-[100px] object-contain"
+              width={100}
+              height={100}
             />
           </SidebarGroupLabel>
           

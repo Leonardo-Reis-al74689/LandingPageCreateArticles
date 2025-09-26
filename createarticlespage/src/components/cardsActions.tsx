@@ -29,6 +29,14 @@ import { useFormData, type ArticleFormData } from "@/hooks/useFormData"
 import { useDropdownData, type DropdownOption } from "@/hooks/useDropdownData"
 import { FormField } from "@/components/FormField"
 import { Separator } from "./ui/separator"
+import { useApiDebounce } from "@/hooks/useDebounce"
+import { 
+  FormFieldType, 
+  FormFieldCodeType, 
+  FIELD_CODE_MAPPING, 
+  FIELD_RESET_RULES, 
+  ArticleTypeCode 
+} from "@/types/enums"
 
 export function SectionCards() {
   const { formData, updateField, updateMultipleFields, resetForm, validateRequired } = useFormData();
@@ -55,6 +63,8 @@ export function SectionCards() {
   
   const [dropdownInputs, setDropdownInputs] = React.useState<Record<string, string>>({});
   const [openDropdowns, setOpenDropdowns] = React.useState<Record<string, boolean>>({});
+  const [isVerifying, setIsVerifying] = React.useState(false);
+  const [isSaving, setIsSaving] = React.useState(false);
 
   const packTypeOptions = [
     { label: "Packs de Meias / Packs Assortment Socks", value: "packs_meias", code: "001", name: "Packs de Meias" },
@@ -161,46 +171,28 @@ export function SectionCards() {
   };
 
   const handleDropdownSelect = async (fieldName: keyof ArticleFormData, option: DropdownOption) => {
-    const codeFieldMap: Record<string, keyof ArticleFormData> = {
-      'articleType': 'articleTypeCode',
-      'client': 'clientCode',
-      'colorAssortment': 'colorCode',
-      'certification': 'certificationCode',
-      'brand': 'brandCode',
-      'size': 'sizeCode',
-      'unit': 'unitCode',
-      'currency': 'currencyCode',
-      'sustainableComp': 'sustainableCode'
-    };
-    
-    const codeFieldName = codeFieldMap[fieldName] || (fieldName + 'Code') as keyof ArticleFormData;
+    const fieldTypeEnum = fieldName as FormFieldType;
+    const codeFieldName = FIELD_CODE_MAPPING[fieldTypeEnum] as keyof ArticleFormData;
     
     const updates: Partial<ArticleFormData> = {};
     updates[fieldName] = option.label;
     updates[codeFieldName] = option.code;
 
-    if (fieldName === 'articleType' && option.code === 'PK') {
+    if (fieldName === FormFieldType.ARTICLE_TYPE && option.code === ArticleTypeCode.PK) {
       setIsPKSelected(true);
       loadPKData();
-    } else if (fieldName === 'articleType' && option.code !== 'PK') {
+    } else if (fieldName === FormFieldType.ARTICLE_TYPE && option.code !== ArticleTypeCode.PK) {
       resetPKData();
     }
 
-    if (fieldName === 'client') {
-      updates.brand = "";
-      updates.brandCode = "";
-      updates.colorAssortment = "";
-      updates.colorCode = "";
-      updates.size = "";
-      updates.sizeCode = "";
-    } else if (fieldName === 'brand') {
-      updates.colorAssortment = "";
-      updates.colorCode = "";
-      updates.size = "";
-      updates.sizeCode = "";
-    } else if (fieldName === 'colorAssortment') {
-      updates.size = "";
-      updates.sizeCode = "";
+    const fieldsToReset = FIELD_RESET_RULES[fieldTypeEnum];
+    if (fieldsToReset) {
+      fieldsToReset.forEach(fieldToReset => {
+        const fieldKey = fieldToReset as keyof ArticleFormData;
+        const codeFieldKey = FIELD_CODE_MAPPING[fieldToReset] as keyof ArticleFormData;
+        updates[fieldKey] = "";
+        updates[codeFieldKey] = "";
+      });
     }
     
     updateMultipleFields(updates);
@@ -248,7 +240,7 @@ export function SectionCards() {
     updateField(field, value);
   }, [numericFields, updateField]);
 
-  const handleVerify = async () => {
+  const handleVerifyInternal = async () => {
     const validation = validateRequired();
     if (!validation.isValid) {
       toast.error("Campos obrigatórios em falta", {
@@ -267,6 +259,7 @@ export function SectionCards() {
     }
 
     try {
+      setIsVerifying(true);
       const result = await apiService.verifyCode(formData as unknown as Record<string, unknown>);
       
       if (result.success) {
@@ -303,16 +296,22 @@ Certificação ${components.certification || '00'}
         description: "Por favor, tente novamente.",
         duration: 5000,
       });
+    } finally {
+      setIsVerifying(false);
     }
   };
 
-  const handleSave = async () => {
+  const { debouncedApiCall: handleVerify } = useApiDebounce(handleVerifyInternal, 500);
+
+  const handleSaveInternal = async () => {
     try {
       const validation = validateRequired();
       if (!validation.isValid) {
         toast.error(`Por favor, preencha os campos obrigatórios: ${validation.missingFields.join(', ')}`);
         return;
       }
+
+      setIsSaving(true);
 
       const articleData = {
         articleType: formData.articleType,
@@ -395,8 +394,12 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
         description: "Por favor, verifique os dados e tente novamente.",
         duration: 5000,
       });
+    } finally {
+      setIsSaving(false);
     }
   };
+
+  const { debouncedApiCall: handleSave } = useApiDebounce(handleSaveInternal, 500);
 
   const handleResetForm = useCallback(() => {
     resetForm();
@@ -726,9 +729,9 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                     onClick={handleVerify}
                     variant="outline"
                     className="w-full"
-                    disabled={!isPKSelected}
+                    disabled={!isPKSelected || isVerifying}
                   >
-                    Verificar/Verify
+                    {isVerifying ? "A verificar..." : "Verificar/Verify"}
                   </Button>
             </div>
             </div>
@@ -749,9 +752,9 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
         <Button 
           onClick={handleSave}
           className="px-8"
-          disabled={!isPKSelected}
+          disabled={!isPKSelected || isSaving}
         >
-          Gravar
+          {isSaving ? "A gravar..." : "Gravar"}
         </Button>
             </div>
     </div>

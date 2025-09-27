@@ -66,9 +66,9 @@ export function SectionCards() {
   const [isVerifying, setIsVerifying] = React.useState(false);
   const [isSaving, setIsSaving] = React.useState(false);
 
-  const packTypeOptions = [
+  const packTypeOptions = useMemo(() => [
     { label: "Packs de Meias / Packs Assortment Socks", value: "packs_meias", code: "001", name: "Packs de Meias" },
-  ];
+  ], []);
 
   const handleDropdownSelect = React.useCallback(async (fieldName: keyof ArticleFormData, option: DropdownOption) => {
     const fieldTypeEnum = fieldName as FormFieldType;
@@ -96,7 +96,7 @@ export function SectionCards() {
     }
     
     updateMultipleFields(updates);
-  }, [loadPKData, resetPKData, updateMultipleFields]);
+  }, [loadPKData, resetPKData, updateMultipleFields, setIsPKSelected]);
 
   React.useEffect(() => {
     const timer = setTimeout(loadInitialData, 200);

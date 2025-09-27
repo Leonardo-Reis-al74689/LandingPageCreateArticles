@@ -70,6 +70,34 @@ export function SectionCards() {
     { label: "Packs de Meias / Packs Assortment Socks", value: "packs_meias", code: "001", name: "Packs de Meias" },
   ];
 
+  const handleDropdownSelect = React.useCallback(async (fieldName: keyof ArticleFormData, option: DropdownOption) => {
+    const fieldTypeEnum = fieldName as FormFieldType;
+    const codeFieldName = FIELD_CODE_MAPPING[fieldTypeEnum] as keyof ArticleFormData;
+    
+    const updates: Partial<ArticleFormData> = {};
+    updates[fieldName] = option.label;
+    updates[codeFieldName] = option.code;
+
+    if (fieldName === FormFieldType.ARTICLE_TYPE && option.code === ArticleTypeCode.PK) {
+      setIsPKSelected(true);
+      loadPKData();
+    } else if (fieldName === FormFieldType.ARTICLE_TYPE && option.code !== ArticleTypeCode.PK) {
+      resetPKData();
+    }
+
+    const fieldsToReset = FIELD_RESET_RULES[fieldTypeEnum];
+    if (fieldsToReset) {
+      fieldsToReset.forEach(fieldToReset => {
+        const fieldKey = fieldToReset as keyof ArticleFormData;
+        const codeFieldKey = FIELD_CODE_MAPPING[fieldToReset] as keyof ArticleFormData;
+        updates[fieldKey] = "";
+        updates[codeFieldKey] = "";
+      });
+    }
+    
+    updateMultipleFields(updates);
+  }, [loadPKData, resetPKData, updateMultipleFields]);
+
   React.useEffect(() => {
     const timer = setTimeout(loadInitialData, 200);
     return () => clearTimeout(timer);
@@ -170,33 +198,6 @@ export function SectionCards() {
     );
   };
 
-  const handleDropdownSelect = async (fieldName: keyof ArticleFormData, option: DropdownOption) => {
-    const fieldTypeEnum = fieldName as FormFieldType;
-    const codeFieldName = FIELD_CODE_MAPPING[fieldTypeEnum] as keyof ArticleFormData;
-    
-    const updates: Partial<ArticleFormData> = {};
-    updates[fieldName] = option.label;
-    updates[codeFieldName] = option.code;
-
-    if (fieldName === FormFieldType.ARTICLE_TYPE && option.code === ArticleTypeCode.PK) {
-      setIsPKSelected(true);
-      loadPKData();
-    } else if (fieldName === FormFieldType.ARTICLE_TYPE && option.code !== ArticleTypeCode.PK) {
-      resetPKData();
-    }
-
-    const fieldsToReset = FIELD_RESET_RULES[fieldTypeEnum];
-    if (fieldsToReset) {
-      fieldsToReset.forEach(fieldToReset => {
-        const fieldKey = fieldToReset as keyof ArticleFormData;
-        const codeFieldKey = FIELD_CODE_MAPPING[fieldToReset] as keyof ArticleFormData;
-        updates[fieldKey] = "";
-        updates[codeFieldKey] = "";
-      });
-    }
-    
-    updateMultipleFields(updates);
-  };
 
   const numericFields = useMemo(() => [
     'numberOfPairs', 'packsPerBox', 'coefficientPerBox', 'unitPrice', 

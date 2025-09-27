@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { apiService, formatDataForDropdown } from '@/hooks/mockData';
 import { toast } from 'sonner';
+import { LoadingState, ArticleTypeCode } from '@/types/enums';
 
 export interface DropdownOption {
   code: string;
@@ -9,11 +10,11 @@ export interface DropdownOption {
   label: string;
 }
 
-export interface LoadingState {
-  initial: boolean;
-  brands: boolean;
-  colors: boolean;
-  sizes: boolean;
+export interface LoadingStates {
+  [LoadingState.INITIAL]: boolean;
+  [LoadingState.BRANDS]: boolean;
+  [LoadingState.COLORS]: boolean;
+  [LoadingState.SIZES]: boolean;
 }
 
 export const useDropdownData = () => {
@@ -27,18 +28,18 @@ export const useDropdownData = () => {
   const [colorOptions, setColorOptions] = useState<DropdownOption[]>([]);
   const [sizeOptions, setSizeOptions] = useState<DropdownOption[]>([]);
 
-  const [loading, setLoading] = useState<LoadingState>({
-    initial: true,
-    brands: false,
-    colors: false,
-    sizes: false,
+  const [loading, setLoading] = useState<LoadingStates>({
+    [LoadingState.INITIAL]: true,
+    [LoadingState.BRANDS]: false,
+    [LoadingState.COLORS]: false,
+    [LoadingState.SIZES]: false,
   });
 
   const [isPKSelected, setIsPKSelected] = useState(false);
 
   const loadInitialData = useCallback(async () => {
     try {
-      setLoading(prev => ({ ...prev, initial: true }));
+      setLoading(prev => ({ ...prev, [LoadingState.INITIAL]: true }));
 
       await new Promise(resolve => setTimeout(resolve, 100));
 
@@ -58,13 +59,13 @@ export const useDropdownData = () => {
         description: "Por favor, recarregue a página e tente novamente."
       });
     } finally {
-      setLoading(prev => ({ ...prev, initial: false }));
+      setLoading(prev => ({ ...prev, [LoadingState.INITIAL]: false }));
     }
   }, []);
 
   const loadPKData = useCallback(async () => {
     try {
-      const pkData = await apiService.getArticleTypeData("PK");
+      const pkData = await apiService.getArticleTypeData(ArticleTypeCode.PK);
       if (pkData.success) {
         setClientOptions(formatDataForDropdown(pkData.customer) as DropdownOption[]);
         setCertificationOptions(formatDataForDropdown(pkData.certification) as DropdownOption[]);
@@ -88,7 +89,7 @@ export const useDropdownData = () => {
     }
 
     try {
-      setLoading(prev => ({ ...prev, brands: true }));
+      setLoading(prev => ({ ...prev, [LoadingState.BRANDS]: true }));
       const brandsData = await apiService.getBrandsByCustomer(clientCode);
       if (brandsData.success) {
         setBrandOptions(formatDataForDropdown(brandsData.data) as DropdownOption[]);
@@ -99,7 +100,7 @@ export const useDropdownData = () => {
       });
       setBrandOptions([]);
     } finally {
-      setLoading(prev => ({ ...prev, brands: false }));
+      setLoading(prev => ({ ...prev, [LoadingState.BRANDS]: false }));
     }
   }, []);
 
@@ -111,7 +112,7 @@ export const useDropdownData = () => {
     }
 
     try {
-      setLoading(prev => ({ ...prev, colors: true }));
+      setLoading(prev => ({ ...prev, [LoadingState.COLORS]: true }));
       const colorsData = await apiService.getColorsByBrand(brandCode);
       if (colorsData.success) {
         setColorOptions(formatDataForDropdown(colorsData.data) as DropdownOption[]);
@@ -122,7 +123,7 @@ export const useDropdownData = () => {
       });
       setColorOptions([]);
     } finally {
-      setLoading(prev => ({ ...prev, colors: false }));
+      setLoading(prev => ({ ...prev, [LoadingState.COLORS]: false }));
     }
   }, []);
 
@@ -133,7 +134,7 @@ export const useDropdownData = () => {
     }
 
     try {
-      setLoading(prev => ({ ...prev, sizes: true }));
+      setLoading(prev => ({ ...prev, [LoadingState.SIZES]: true }));
       const sizesData = await apiService.getSizesByColor(colorCode);
       
       if (sizesData.success && sizesData.data) {
@@ -146,7 +147,7 @@ export const useDropdownData = () => {
       });
       setSizeOptions([]);
     } finally {
-      setLoading(prev => ({ ...prev, sizes: false }));
+      setLoading(prev => ({ ...prev, [LoadingState.SIZES]: false }));
     }
   }, []);
 

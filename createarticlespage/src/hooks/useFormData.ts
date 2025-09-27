@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { FormFieldType } from '@/types/enums';
 
 export interface ArticleFormData {
   articleType: string;
@@ -35,6 +36,19 @@ export interface ArticleFormData {
   boxDepth: string;
   newCodeGenerated: string;
 }
+
+export type FormFieldKeyMapping = {
+  [FormFieldType.ARTICLE_TYPE]: 'articleType';
+  [FormFieldType.CLIENT]: 'client';
+  [FormFieldType.COLOR_ASSORTMENT]: 'colorAssortment';
+  [FormFieldType.CERTIFICATION]: 'certification';
+  [FormFieldType.BRAND]: 'brand';
+  [FormFieldType.SIZE]: 'size';
+  [FormFieldType.UNIT]: 'unit';
+  [FormFieldType.CURRENCY]: 'currency';
+  [FormFieldType.SUSTAINABLE_COMP]: 'sustainableComp';
+  [FormFieldType.PACK_TYPE]: 'packType';
+};
 
 const initialFormData: ArticleFormData = {
   articleType: "",

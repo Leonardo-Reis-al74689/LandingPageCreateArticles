@@ -32,10 +32,10 @@ import { Separator } from "./ui/separator"
 import { useApiDebounce } from "@/hooks/useDebounce"
 import { 
   FormFieldType, 
-  FormFieldCodeType, 
   FIELD_CODE_MAPPING, 
   FIELD_RESET_RULES, 
-  ArticleTypeCode 
+  ArticleTypeCode,
+  LoadingState 
 } from "@/types/enums"
 
 export function SectionCards() {
@@ -425,7 +425,7 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
               <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
                 Tipo / Kind
               </label>
-              {createDropdown("articleType", articleTypeOptions, "Selecionar tipo...", "w-full", loading.initial)}
+              {createDropdown("articleType", articleTypeOptions, "Selecionar tipo...", "w-full", loading[LoadingState.INITIAL])}
             </div>
             <div className="space-y-2 md:col-span-7">
               <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
@@ -458,7 +458,7 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-end">
                     Cliente / Customer
                   </label>
-                  {createDropdown("client", clientOptions, "Selecionar cliente...", "w-full", loading.initial)}
+                  {createDropdown("client", clientOptions, "Selecionar cliente...", "w-full", loading[LoadingState.INITIAL])}
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -505,19 +505,19 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
                     Cor - Sortimento / Color - Assortment
                   </label>
-                  {createDropdown("colorAssortment", colorOptions, colorOptions.length > 0 ? "Selecionar cor..." : "Primeiro selecione uma marca", "w-full", loading.colors)}
+                  {createDropdown("colorAssortment", colorOptions, colorOptions.length > 0 ? "Selecionar cor..." : "Primeiro selecione uma marca", "w-full", loading[LoadingState.COLORS])}
                 </div>
                 <div className="space-y-2 md:col-span-3">
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
                     Marca / Brand
                   </label>
-                  {createDropdown("brand", brandOptions, brandOptions.length > 0 ? "Selecionar marca..." : "Primeiro selecione um cliente", "w-full", loading.brands)}
+                  {createDropdown("brand", brandOptions, brandOptions.length > 0 ? "Selecionar marca..." : "Primeiro selecione um cliente", "w-full", loading[LoadingState.BRANDS])}
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
                     Tamanho / Size
                   </label>
-                  {createDropdown("size", sizeOptions, sizeOptions.length > 0 ? "Selecionar tamanho..." : "Primeiro selecione uma cor", "w-full", loading.sizes)}
+                  {createDropdown("size", sizeOptions, sizeOptions.length > 0 ? "Selecionar tamanho..." : "Primeiro selecione uma cor", "w-full", loading[LoadingState.SIZES])}
                 </div>
               </div>
 
@@ -527,7 +527,7 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
                     Certificação / Certification
                   </label>
-                  {createDropdown("certification", certificationOptions, "Selecionar certificação...", "w-full", loading.initial)}
+                  {createDropdown("certification", certificationOptions, "Selecionar certificação...", "w-full", loading[LoadingState.INITIAL])}
                 </div>
               </div>
 
@@ -597,7 +597,7 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                      <div className="space-y-1">
                      <label className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-end">Un/Unit</label>
                        <div className="w-16">
-                         {createDropdown("unit", unitOptions, "Un", "w-full", loading.initial)}
+                         {createDropdown("unit", unitOptions, "Un", "w-full", loading[LoadingState.INITIAL])}
                        </div>
                      </div>
                      <div className="flex-1 min-w-[100px]">
@@ -618,7 +618,7 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                      <div className="space-y-1">
                      <label className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-end">Moeda/Currency</label>
                        <div className="w-20">
-                         {createDropdown("currency", currencyOptions, "EUR", "w-full", loading.initial)}
+                         {createDropdown("currency", currencyOptions, "EUR", "w-full", loading[LoadingState.INITIAL])}
                        </div>
                      </div>
                    </div>
@@ -631,7 +631,7 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                   <label className="text-sm font-medium text-gray-600 dark:text-gray-400 min-h-[2.5rem] flex items-end">
                     Sustainable Comp.
                   </label>
-                  {createDropdown("sustainableComp", sustainableOptions, "Selecionar...", "w-full", loading.initial)}
+                  {createDropdown("sustainableComp", sustainableOptions, "Selecionar...", "w-full", loading[LoadingState.INITIAL])}
                 </div>
               </div>
 

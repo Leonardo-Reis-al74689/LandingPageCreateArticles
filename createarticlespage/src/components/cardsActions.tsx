@@ -80,7 +80,7 @@ export function SectionCards() {
       const defaultPackOption = packTypeOptions[0];
       handleDropdownSelect('packType', defaultPackOption);
     }
-  }, [formData.packType]);
+  }, [formData.packType, packTypeOptions, handleDropdownSelect]);
 
   React.useEffect(() => {
     loadBrands(formData.clientCode);
@@ -389,7 +389,7 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
           }
         });
       }
-    } catch (error) {
+    } catch {
       toast.error("Erro ao gravar artigo", {
         description: "Por favor, verifique os dados e tente novamente.",
         duration: 5000,

@@ -7,7 +7,7 @@ import { useCallback, useRef } from 'react';
  * @param delay - Tempo de delay em milissegundos (padrão: 300ms)
  * @returns Função debounced
  */
-export function useDebounce<T extends (...args: any[]) => any>(
+export function useDebounce<T extends (...args: unknown[]) => unknown>(
   callback: T,
   delay: number = 300
 ): (...args: Parameters<T>) => void {
@@ -38,7 +38,7 @@ export function useDebounce<T extends (...args: any[]) => any>(
  * @param delay - Tempo de delay em milissegundos (padrão: 500ms para APIs)
  * @returns Objeto com função debounced e estado de loading
  */
-export function useApiDebounce<T extends (...args: any[]) => Promise<any>>(
+export function useApiDebounce<T extends (...args: unknown[]) => Promise<unknown>>(
   apiFunction: T,
   delay: number = 500
 ) {

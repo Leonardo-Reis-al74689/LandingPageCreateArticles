@@ -27,7 +27,7 @@ function DefaultContent({ title }: { title: string }) {
             {title}
           </h2>
           <p className="text-gray-500 dark:text-gray-400 max-w-md">
-            Esta secção está em desenvolvimento. Por favor, selecione "Create Articles" para aceder à funcionalidade disponível.
+            Esta secção está em desenvolvimento. Por favor, selecione &ldquo;Create Articles&rdquo; para aceder à funcionalidade disponível.
           </p>
         </div>
       </div>

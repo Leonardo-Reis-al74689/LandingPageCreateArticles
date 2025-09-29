@@ -112,7 +112,7 @@
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 [data-sonner-toaster] {
-  --width: 356px;
+  --width: min(400px, calc(100vw - 32px));
   --font-family: inherit;
   --normal-bg: var(--popover);
   --normal-text: var(--popover-foreground);
@@ -129,6 +129,37 @@
   --y: 0;
   --lift: 1;
   --lift-amount: calc(var(--lift) * var(--gap));
+}
+
+/* Estilos responsivos para toasts em dispositivos móveis */
+@media (max-width: 640px) {
+  [data-sonner-toaster] {
+    --width: calc(100vw - 24px);
+    left: 12px !important;
+    right: 12px !important;
+    transform: none !important;
+  }
+  
+  [data-sonner-toast] {
+    max-width: calc(100vw - 24px) !important;
+    width: calc(100vw - 24px) !important;
+    margin: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    font-size: 13px;
+  }
+  
+  [data-sonner-toast] [data-title] {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  [data-sonner-toast] [data-description] {
+    font-size: 12px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
 }
 
 @layer base {

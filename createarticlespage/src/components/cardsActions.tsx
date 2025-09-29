@@ -466,13 +466,8 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                     Packs p/Cx. / Packs per Box
                   </label>
                   <Input
-                    value={formData.packsPerBox || "0"}
+                    value={formData.packsPerBox}
                     onChange={e => handleInputChange("packsPerBox", e.target.value)}
-                    onFocus={e => {
-                      if (e.target.value === "0" && !formData.packsPerBox) {
-                        e.target.select();
-                      }
-                    }}
                     className="w-full"
                     placeholder="0"
                     type="number"
@@ -484,13 +479,8 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                     Coeficiente p/Cx. / Coefficient per Box
                   </label>
                   <Input
-                    value={formData.coefficientPerBox || "0"}
+                    value={formData.coefficientPerBox}
                     onChange={e => handleInputChange("coefficientPerBox", e.target.value)}
-                    onFocus={e => {
-                      if (e.target.value === "0" && !formData.coefficientPerBox) {
-                        e.target.select();
-                      }
-                    }}
                     className="w-full"
                     placeholder="0,00000000"
                     type="number"
@@ -588,7 +578,7 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                       min="0"
                       step="0.1"
                     />
-                    <span className="flex items-center text-sm text-gray-600 dark:text-gray-400 px-2">
+                    <span className="flex items-center text-sm text-gray-600 dark:text-gray-400 ">
                       Gr
                     </span>
                   </div>
@@ -597,7 +587,7 @@ Código: ${formData.newCodeGenerated || 'Não gerado'}
                    <div className="flex flex-wrap gap-2 items-end">
                      <div className="space-y-1">
                      <label className="text-sm font-medium text-gray-600 dark:text-gray-400 flex items-end">Un/Unit</label>
-                       <div className="w-16">
+                       <div className="w-20">
                          {createDropdown("unit", unitOptions, "Un", "w-full", loading[LoadingState.INITIAL])}
                        </div>
                      </div>
